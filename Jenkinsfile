@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        pollSCM('H/2 * * * *') // каждые 2 минуты
+    }
+
     stages {
         stage('Build Docker Image') {
             steps {
@@ -9,9 +13,8 @@ pipeline {
                 }
             }
         }
-    }
 
-    stage('Push to Docker Hub') {
+        stage('Push to Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'docker-hub-creds', url: '']) {
                     script {
@@ -21,9 +24,10 @@ pipeline {
             }
         }
 
-    stage('Deploy with Ansible') {
-        steps {
-            sh 'ansible-playbook -i ansible/inventory.ini ansible/deploy.yml'
+        stage('Deploy with Ansible') {
+            steps {
+                sh 'ansible-playbook -i ansible/inventory.ini ansible/deploy.yml'
+            }
         }
-    }
+    } 
 }
