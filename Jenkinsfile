@@ -14,19 +14,21 @@ pipeline {
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Docker Push') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-creds', url: '']) {
-                    script {
-                        dockerImage.push('latest')
-                    }
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker tag weather-app $DOCKER_USER/weather-app
+                    docker push $DOCKER_USER/weather-app
+                    """
                 }
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
-                sh 'ansible-playbook -i ansible/inventory.ini ansible/deploy.yml'
+                sh 'ansible-playbook -i Ansible/inventory.ini Ansible/deploy.yml'
             }
         }
     } 
