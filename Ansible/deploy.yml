@@ -1,0 +1,12 @@
+- name: Deploy weather app container
+  hosts: web
+  become: true
+  tasks:
+    - name: Pull Docker image
+      shell: docker pull 56518382/weather-app:latest
+
+    - name: Stop and remove old container
+      shell: docker rm -f weather-app || true
+
+    - name: Run new container
+      shell: docker run -d --name weather-app -p 5000:5000 56518382/weather-app:latest
