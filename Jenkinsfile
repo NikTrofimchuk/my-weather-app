@@ -29,7 +29,7 @@ pipeline {
         stage('Deploy on VM') {
             steps {
                 sshagent(credentials: ['ansible-ssh-key']) {
-                    sh 'ansible-playbook -i Ansible\inventory.ini Ansible\deploy.yml'
+                    sh 'ansible-playbook -i Ansible/inventory.ini Ansible/deploy.yml'
                 }
             }
         }
