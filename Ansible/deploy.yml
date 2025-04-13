@@ -1,6 +1,5 @@
 - name: Deploy weather app container
   hosts: web
-  become: true
   tasks:
     - name: Pull Docker image
       shell: docker pull 56518382/weather-app:latest
